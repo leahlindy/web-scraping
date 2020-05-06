@@ -1,98 +1,115 @@
-!/usr/bin/env python
-coding: utf-8
+#!/usr/bin/env python
+#coding: utf-8
 
 # Dependencies
 from bs4 import BeautifulSoup
 import requests
 import os
 from splinter import Browser
+import pandas as pd
 
+# Function to initiate splinter
+def init_browser():
+    executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
+    return Browser("chrome", **executable_path, headless=False)
 
-# URL of mars news page to scrape
-url = 'https://mars.nasa.gov/news/'
-
-
-# Use Requests to retreive the page
-response = requests.get(url)
-
-
-# BeautifulSoup object to parse with html.parser 
-soup = BeautifulSoup(response.text, 'html.parser')
-
-
-# Examine the soup to determine which elements needed (News Title & Paragraph)
-# Use chrome inspector to find tag and class to 'find_all' elements
-#print(soup.prettify())
-
-# Assign variable for results- this is a list of each slide which can be iterate through
-news_results = soup.find_all('div', class_="slide")
-#len(news_results)
-#news_results
-
-# lists to hold results
-news_title = []
-news_para = []
-
-
-# iterate through the list of slides
-for result in news_results:
-    title = result.find('div', class_= 'content_title').find('a').text
-    news_title.append(title)
+#define a scrape function that takes 
+def scrape():
     
-    paragraph = result.find('div', class_='rollover_description_inner').text
-    news_para.append(paragraph)
+    # Create a dictionary for all of the scraped data
+    mars_data = {}
+
+    # ----------------------------------------------------------- #
+    # -------------------------  NEWS --------------------------- #
+    # ----------------------------------------------------------- #
+
+    # URL of mars news page to scrape
+    url = 'https://mars.nasa.gov/news/'
+    # Use Requests to retreive the page
+    response = requests.get(url)
+
+    # BeautifulSoup object to parse with html.parser 
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Examine the soup to determine which elements needed (News Title & Paragraph)
+    # Use chrome inspector to find tag and class to 'find_all' elements
+    #print(soup.prettify())
+
+    # Assign variable for results- this is a list of each slide which can be iterate through
+    news_results = soup.find_all('div', class_="slide")
+    #len(news_results)
+    #news_results
+
+    # lists to hold results
+    news_title = []
+    news_para = []
 
 
-# print(news_title)
-# print('------------------------')
-# print(news_para)
+    # iterate through the list of slides
+    for result in news_results:
+        title = result.find('div', class_= 'content_title').find('a').text
+        news_title.append(title)
+        
+        paragraph = result.find('div', class_='rollover_description_inner').text
+        paragraph = paragraph.replace('\n', ' ')
+        news_para.append(paragraph)
 
-# Need to clean the resuls (remove \n)
+    # append to mars dictionary (only need the first-- most recent item)
+    mars_data["news_title"] = news_title[0]
+    mars_data["summary"] = news_para[0]
+
+
+    # print(news_title)
+    # print('------------------------')
+    # print(news_para)
 
 # ----------------------------------------------------------- #
 # ----------------  JPL Featured Space Image ---------------- #
 # ----------------------------------------------------------- #
 
-get_ipython().system('which chromedriver')
-
-# Use splinter to go to browser and click through to scrape
-executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-browser = Browser('chrome', **executable_path, headless=False)
-url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-browser.visit(url)
-
-# Click image on landing page
-button = browser.find_by_id('full_image')
-button.click()
-
-# Click more info to go to full size image
-button_2 = browser.find_by_text('more info     ')
-button_2.click()
-
-# click on the main image to open in it's own browser
-# find_by_css function uses .class_name
-button_3 = browser.find_by_css('.main_image')
-button_3.click()
+    # Use splinter to go to browser and click through to scrape
+    browser = init_browser()
 
 
-# Find .jpg link with soup
-html = browser.html
-soup = BeautifulSoup(html, 'html.parser')
+    url2 = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    browser.visit(url2)
 
-image_page = soup.find_all('img')
+    # Click image on landing page
+    button = browser.find_by_id('full_image')
+    button.click()
+
+    # Click more info to go to full size image
+    button_2 = browser.find_by_text('more info     ')
+    button_2.click()
+
+    # click on the main image to open in it's own browser
+    # find_by_css function uses .class_name
+    button_3 = browser.find_by_css('.main_image')
+    button_3.click()
 
 
-for image in image_page:
-    #print(image['src'])
-    featured_image_url = image['src']
+    # Find .jpg link with soup
+    html = browser.html
+    soup = BeautifulSoup(html, 'html.parser')
+
+    image_page = soup.find_all('img')
+
+
+    for image in image_page:
+        #print(image['src'])
+        featured_image_url = image['src']
+    
+    # add to dictionary
+    mars_data['featured_image_url']= featured_image_url
+
 
 # ----------------------------------------------------------- #
 # ----------------------  Mars Weather ---------------------- #
 # ----------------------------------------------------------- #
 #scrape the latest Mars weather tweet 
 
-url = 'https://twitter.com/marswxreport?lang=en'
-response = requests.get(url)
+url3 = 'https://twitter.com/marswxreport?lang=en'
+response = requests.get(url3)
 
 # BeautifulSoup object to parse with html.parser 
 soup = BeautifulSoup(response.text, 'html.parser')
@@ -101,13 +118,13 @@ recent_tweet= tweets[0]
 mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
 
 # Mars Data Table
-import pandas as pd
-url = 'https://space-facts.com/mars/'
-response = requests.get(url)
+
+url4 = 'https://space-facts.com/mars/'
+response = requests.get(url4)
 soup = BeautifulSoup(response.text, 'html.parser')
 
 # Use read_html to get all tables from url
-table=pd.read_html(url)
+table=pd.read_html(url4)
 # First table is where information is held
 mars_df=table[0]
 mars_df.rename(columns={
@@ -158,7 +175,7 @@ for x in range(0,4):
     print(f'Complete ({x+1}/4)')
     
     browser.quit()
-    
+
 # print(hemisphere_image_urls)
 
 
