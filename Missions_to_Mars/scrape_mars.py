@@ -14,7 +14,7 @@ def init_browser():
     return Browser("chrome", **executable_path, headless=False)
 
 #define a scrape function that takes 
-def scrape():
+def scrape_sites():
     
     # Create a dictionary for all of the scraped data
     mars_data = {}

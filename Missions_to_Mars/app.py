@@ -15,3 +15,8 @@ mongo = PyMongo(app)
 
 # define route for scrape to import scrape_mars.py
 @app.route("scrape/")
+def scraper():
+    mars = mongo.db.mars
+    mars_data = scrape_mars.scrape_sites()
+    mars.update({}, mars_data, upsert=True)
+    return redirect("/", code=302)
