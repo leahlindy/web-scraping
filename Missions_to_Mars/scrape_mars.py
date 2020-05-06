@@ -118,8 +118,12 @@ def scrape_sites():
     recent_tweet= tweets[0]
     mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
 
-# Mars Data Table
+    #add to mars_data
+    mars_data['mars_weather'] = mars_weather
 
+    # ----------------------------------------------------------- #
+    # --------------------- Mars Data Table --------------------- #
+    # ----------------------------------------------------------- #
     url4 = 'https://space-facts.com/mars/'
     response = requests.get(url4)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -136,7 +140,7 @@ def scrape_sites():
     # to_html writes table back to html table code
     mars_html=mars_df.to_html
     
-    mars_data['Mars table'] = mars_html
+    mars_data['Mars_table'] = mars_html
 
 
     # ----------------------------------------------------------- #
@@ -172,7 +176,7 @@ def scrape_sites():
         img_url = soup.find('div','downloads').find_all('a')[1]['href']
 
         #{"title": "Valles Marineris Hemisphere", "img_url": "..."}
-        dictionary = {'title':title,'image_url':img_url}
+        dictionary = {'title':title,'img_url':img_url}
         hemisphere_image_urls.append(dictionary)
         print(f'Complete ({x+1}/4)')
 
@@ -184,9 +188,27 @@ def scrape_sites():
 
     #return the dictionary in the end
     return mars_data
+    
 
 scrape_sites()
 
+
+#DICTIONARY:
+#NEWS: 
+    #'news_title' = news_title[0]
+    #'summary' = news_para[0]
+
+#JPL IMG:
+    # {featured_image_url: 'url'}
+
+#TWEET WEATHER:
+    #{mars_weather: mars_weather tweet}
+
+# MARS DATA TABLE
+    # {Mars_table: mars_html}
+
+#HEMISPHERES:
+    #{Hemsipheres: [{title, img_url}]}
 
 
 
