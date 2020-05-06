@@ -185,7 +185,7 @@ def scrape_sites():
     #return the dictionary in the end
     return mars_data
 
-scrape()
+scrape_sites()
 
 
 
