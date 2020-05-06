@@ -51,12 +51,12 @@ def scrape():
         news_title.append(title)
         
         paragraph = result.find('div', class_='rollover_description_inner').text
-        paragraph = paragraph.replace('\n', ' ')
+        paragraph = paragraph.replace("\n", "")
         news_para.append(paragraph)
 
     # append to mars dictionary (only need the first-- most recent item)
-    mars_data["news_title"] = news_title[0]
-    mars_data["summary"] = news_para[0]
+    mars_data['news_title'] = news_title[0]
+    mars_data['summary'] = news_para[0]
 
 
     # print(news_title)
@@ -179,11 +179,11 @@ def scrape():
         
 
         browser.quit()
-
-    mars_data['Hemisphere'] = hemisphere_image_urls
+    #append to dictionary (list of dictionary is the value)
+    mars_data['Hemispheres'] = hemisphere_image_urls
 
     #return the dictionary in the end
-    print(mars_data)
+    return mars_data
 
 scrape()
 
