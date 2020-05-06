@@ -99,84 +99,94 @@ def scrape():
         #print(image['src'])
         featured_image_url = image['src']
     
+    browser.quit()
     # add to dictionary
     mars_data['featured_image_url']= featured_image_url
 
+    
+    # ----------------------------------------------------------- #
+    # ----------------------  Mars Weather ---------------------- #
+    # ----------------------------------------------------------- #
+    #scrape the latest Mars weather tweet 
 
-# ----------------------------------------------------------- #
-# ----------------------  Mars Weather ---------------------- #
-# ----------------------------------------------------------- #
-#scrape the latest Mars weather tweet 
+    url3 = 'https://twitter.com/marswxreport?lang=en'
+    response = requests.get(url3)
 
-url3 = 'https://twitter.com/marswxreport?lang=en'
-response = requests.get(url3)
-
-# BeautifulSoup object to parse with html.parser 
-soup = BeautifulSoup(response.text, 'html.parser')
-tweets = soup.select("div.js-tweet-text-container")
-recent_tweet= tweets[0]
-mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
+    # BeautifulSoup object to parse with html.parser 
+    soup = BeautifulSoup(response.text, 'html.parser')
+    tweets = soup.select("div.js-tweet-text-container")
+    recent_tweet= tweets[0]
+    mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
 
 # Mars Data Table
 
-url4 = 'https://space-facts.com/mars/'
-response = requests.get(url4)
-soup = BeautifulSoup(response.text, 'html.parser')
+    url4 = 'https://space-facts.com/mars/'
+    response = requests.get(url4)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-# Use read_html to get all tables from url
-table=pd.read_html(url4)
-# First table is where information is held
-mars_df=table[0]
-mars_df.rename(columns={
+    # Use read_html to get all tables from url
+    table=pd.read_html(url4)
+    # First table is where information is held
+    mars_df=table[0]
+    mars_df.rename(columns={
     0: 'Facts',
     1: 'Value'  
-})
+    })
 
-# to_html writes table back to html table code
-mars_html=mars_df.to_html
+    # to_html writes table back to html table code
+    mars_html=mars_df.to_html
+    
+    mars_data['Mars table'] = mars_html
 
 
-# ----------------------------------------------------------- #
-# --------------------Mars Hemispheres----------------------- #
-# ----------------------------------------------------------- #
+    # ----------------------------------------------------------- #
+    # --------------------Mars Hemispheres----------------------- #
+    # ----------------------------------------------------------- #
 
-#Empty list to hold dictionary for each hemisphere 
-hemisphere_image_urls= []
+    #Empty list to hold dictionary for each hemisphere 
+    hemisphere_image_urls= []
 
-# Iterate through entire webpage to scrape data from each of 4 images
-for x in range(0,4):
-    
-    # Use splinter to click on each image link and store in empty dictionary
-    executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-    browser = Browser('chrome', **executable_path, headless=False)
-    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    browser.visit(url)
-    
-    # BS to parse through webpage
-    html = browser.html
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    # Click on image reate list to hold all images to click
-    hemispheres = browser.find_by_css('.thumb')
-    hemispheres[x].click()
-    
+    # Iterate through entire webpage to scrape data from each of 4 images
+    for x in range(0,4):
 
-    #On new page scrape title and image
-    html = browser.html
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    #Use BS to find text from title and href from image 
-    title = soup.find('h2','title').text
-    img_url = soup.find('div','downloads').find_all('a')[1]['href']
-    
-    #{"title": "Valles Marineris Hemisphere", "img_url": "..."}
-    dictionary = {'title':title,'image_url':img_url}
-    hemisphere_image_urls.append(dictionary)
-    print(f'Complete ({x+1}/4)')
-    
-    browser.quit()
+        # Use splinter to click on each image link and store in empty dictionary
+        browser = init_browser()
+        url5 = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+        browser.visit(url5)
 
-# print(hemisphere_image_urls)
+        # BS to parse through webpage
+        html = browser.html
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # Click on image reate list to hold all images to click
+        hemispheres = browser.find_by_css('.thumb')
+        hemispheres[x].click()
+
+
+        #On new page scrape title and image
+        html = browser.html
+        soup = BeautifulSoup(html, 'html.parser')
+
+        #Use BS to find text from title and href from image 
+        title = soup.find('h2','title').text
+        img_url = soup.find('div','downloads').find_all('a')[1]['href']
+
+        #{"title": "Valles Marineris Hemisphere", "img_url": "..."}
+        dictionary = {'title':title,'image_url':img_url}
+        hemisphere_image_urls.append(dictionary)
+        print(f'Complete ({x+1}/4)')
+
+        
+
+        browser.quit()
+
+    mars_data['Hemisphere'] = hemisphere_image_urls
+
+    #return the dictionary in the end
+    print(mars_data)
+
+scrape()
+
 
 
 
