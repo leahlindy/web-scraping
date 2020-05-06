@@ -1,7 +1,5 @@
 # web-scraping
-In this project I am practicing webscraping.
-Multiple websites are being scraped for specific information which are stored in lists:
-
+Build a web application that scrapes various websites for data related to the Mission to Mars and displays the information in a single HTML page.
 - mars.nasa.gov/news
 - jpl.nasa.gov
 - Twitter
