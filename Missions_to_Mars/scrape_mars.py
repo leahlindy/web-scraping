@@ -46,8 +46,11 @@ def scrape_sites():
 
 
     # iterate through the list of slides
+    # iterate through the list of slides
     for result in news_results:
         title = result.find('div', class_= 'content_title').find('a').text
+        # replace() function removes formatting \n
+        title = title.replace("\n", "")
         news_title.append(title)
         
         paragraph = result.find('div', class_='rollover_description_inner').text
@@ -138,7 +141,7 @@ def scrape_sites():
     })
 
     # to_html writes table back to html table code
-    mars_html=mars_df.to_html
+    mars_html=mars_df.to_html()
     
     mars_data['Mars_table'] = mars_html
 
@@ -149,18 +152,14 @@ def scrape_sites():
 
     #Empty list to hold dictionary for each hemisphere 
     hemisphere_image_urls= []
-
+    browser = init_browser()
     # Iterate through entire webpage to scrape data from each of 4 images
     for x in range(0,4):
 
         # Use splinter to click on each image link and store in empty dictionary
-        browser = init_browser()
         url5 = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
         browser.visit(url5)
 
-        # BS to parse through webpage
-        html = browser.html
-        soup = BeautifulSoup(html, 'html.parser')
 
         # Click on image reate list to hold all images to click
         hemispheres = browser.find_by_css('.thumb')
@@ -180,18 +179,17 @@ def scrape_sites():
         hemisphere_image_urls.append(dictionary)
         print(f'Complete ({x+1}/4)')
 
-        
-
-        browser.quit()
+    browser.quit()
+    
     #append to dictionary (list of dictionary is the value)
     mars_data['Hemispheres'] = hemisphere_image_urls
 
     #return the dictionary in the end
+    print(mars_data)
     return mars_data
-    
 
-scrape_sites()
-
+if __name__ == "__main__":
+    scrape_sites()
 
 #DICTIONARY:
 #NEWS: 
