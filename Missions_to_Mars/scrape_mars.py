@@ -77,30 +77,18 @@ def scrape_sites():
     url2 = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     browser.visit(url2)
 
-    # Click image on landing page
-    button = browser.find_by_id('full_image')
-    button.click()
-
-    # Click more info to go to full size image
-    button_2 = browser.find_by_text('more info     ')
-    button_2.click()
-
-    # click on the main image to open in it's own browser
-    # find_by_css function uses .class_name
-    button_3 = browser.find_by_css('.main_image')
-    button_3.click()
-
-
-    # Find .jpg link with soup
+    #once on main page parse through soup
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
 
-    image_page = soup.find_all('img')
+    #image is located in the article tag
+    image_main = soup.find_all('article')
 
-
-    for image in image_page:
-        #print(image['src'])
-        featured_image_url = image['src']
+    #within style there is 'background image url('url'), which is split (2nd item in returned list is image url)
+    image =image_main[0]['style']
+    image_url=image.split("'")[1]
+    #image url is /image which needs to be attached to the jpl site
+    featured_image_url= 'https://www.jpl.nasa.gov' + image_url
     
     browser.quit()
     # add to dictionary
@@ -117,6 +105,7 @@ def scrape_sites():
 
     # BeautifulSoup object to parse with html.parser 
     soup = BeautifulSoup(response.text, 'html.parser')
+    #most resent tweet is first in the text container list returned
     tweets = soup.select("div.js-tweet-text-container")
     recent_tweet= tweets[0]
     mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
