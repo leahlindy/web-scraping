@@ -162,6 +162,7 @@ def scrape_sites():
 
         #Use BS to find text from title and src from image 
         title = soup.find('h2','title').text
+        title=title.split('Enhanced')[0]
         img_src = soup.find_all('img','wide-image')[0]['src']
         img_url = 'https://astrogeology.usgs.gov/' + img_src
 
