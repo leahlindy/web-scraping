@@ -1,0 +1,23 @@
+.section {
+    background-color: rgba(0, 140, 255, 0.541);
+  }
+
+.andale_font {
+    font: 'Andale Mono', monospace;
+}
+
+h2 {
+    font: 'Andale Mono', monospace;
+    font: size 12;
+}
+.bold {
+    font-weight:bold;
+    font: size 15;
+}
+img:hover {
+    opacity: 0.5;
+}
+
+#white_font { 
+    color: white; 
+}

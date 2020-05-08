@@ -58,8 +58,8 @@ def scrape_sites():
         news_para.append(paragraph)
 
     # append to mars dictionary (only need the first-- most recent item)
-    mars_data['news_title'] = news_title[0]
-    mars_data['summary'] = news_para[0]
+    mars_data["news_title"] = news_title[0]
+    mars_data["summary"] = news_para[0]
 
 
     # print(news_title)
@@ -104,7 +104,7 @@ def scrape_sites():
     
     browser.quit()
     # add to dictionary
-    mars_data['featured_image_url']= featured_image_url
+    mars_data["featured_image_url"]= featured_image_url
 
     
     # ----------------------------------------------------------- #
@@ -122,7 +122,7 @@ def scrape_sites():
     mars_weather = recent_tweet.find('p', class_='TweetTextSize').text
 
     #add to mars_data
-    mars_data['mars_weather'] = mars_weather
+    mars_data["mars_weather"] = mars_weather
 
     # ----------------------------------------------------------- #
     # --------------------- Mars Data Table --------------------- #
@@ -135,15 +135,17 @@ def scrape_sites():
     table=pd.read_html(url4)
     # First table is where information is held
     mars_df=table[0]
-    mars_df.rename(columns={
-    0: 'Facts',
-    1: 'Value'  
-    })
+    mars_df= mars_df.rename(columns={
+        0: 'Facts',
+        1: 'Value'  
+        })
 
     # to_html writes table back to html table code
     mars_html=mars_df.to_html()
+    mars_html=mars_html.replace("dataframe","table")
+    mars_html=mars_html.replace('border="1"',"")
     
-    mars_data['Mars_table'] = mars_html
+    mars_data["Mars_table"] = mars_html
 
 
     # ----------------------------------------------------------- #
@@ -175,14 +177,14 @@ def scrape_sites():
         img_url = soup.find('div','downloads').find_all('a')[1]['href']
 
         #{"title": "Valles Marineris Hemisphere", "img_url": "..."}
-        dictionary = {'title':title,'img_url':img_url}
+        dictionary = {"title":title,"img_url":img_url}
         hemisphere_image_urls.append(dictionary)
         print(f'Complete ({x+1}/4)')
 
     browser.quit()
     
     #append to dictionary (list of dictionary is the value)
-    mars_data['Hemispheres'] = hemisphere_image_urls
+    mars_data["Hemispheres"] = hemisphere_image_urls
 
     #return the dictionary in the end
     print(mars_data)

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Mission to Mars</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="jumbotron text-center" style="background-image: url('https://wallpaperaccess.com/full/538127.jpg'); background-size: cover;">
+      <h1 class="text-white">Mission to Mars!</h1>
+      <p class=' andale_font'><a class="btn bg-light btn-lg text-dark" href="/scrape" role="button">Get Data!</a></p>
+    </div>
+    <!-- mars is the name of db from /scrape that will be returned -->
+    
+    
+    <div class="row">
+        <div class="col-lg-12 col-sm-8">
+          <h1 class='andale_font'>Latest Mars News</h1>
+          <h2 class='andale_font'>{{ mars.news_title }} </h2>
+          <h4 class='andale_font'> {{ mars.summary }}</h4>
+        </div>
+      </div>
+<hr>
+      <div class="row">
+          <div class="col-lg-7 col-sm-9">
+            <h5 class='andale_font'>Featured Image</h5>
+            <div class='card '>
+              <img :hover class= 'card-img-top' href='https://www.jpl.nasa.gov/spaceimages/' src="{{ mars.featured_image_url }}" alt="Featured Image">
+            </div>
+              
+          </div>
+      
+        
+          <div class='col-lg-5 col-sm-3'>
+            <br>
+            <div class='card'>
+              <h2 class='card-title andale_font'>Current Weather on Mars</h2>
+              <p class='card-body'>{{mars.mars_weather}}</p>
+            </div>
+            <br>
+            <div class='card'>
+              <h3 class='andale_font'>Mars Facts</h3>
+              
+                {{mars.Mars_table|safe }}
+              
+            </div>
+            </div>
+
+       
+            
+
+  </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous">
+    </script>
+</body>
+
+</html>
