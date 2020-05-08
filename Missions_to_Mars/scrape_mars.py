@@ -156,14 +156,14 @@ def scrape_sites():
         hemispheres = browser.find_by_css('.thumb')
         hemispheres[x].click()
 
-
         #On new page scrape title and image
         html = browser.html
         soup = BeautifulSoup(html, 'html.parser')
 
-        #Use BS to find text from title and href from image 
+        #Use BS to find text from title and src from image 
         title = soup.find('h2','title').text
-        img_url = soup.find('div','downloads').find_all('a')[1]['href']
+        img_src = soup.find_all('img','wide-image')[0]['src']
+        img_url = 'https://astrogeology.usgs.gov/' + img_src
 
         #{"title": "Valles Marineris Hemisphere", "img_url": "..."}
         dictionary = {"title":title,"img_url":img_url}
